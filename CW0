@@ -1,0 +1,71 @@
+#Instalujemy wymagane biblioteki i importujemy je
+
+!pip install numpy
+!pip install matplotlib
+import numpy as np
+import matplotlib.pyplot as plt
+import matplotlib.animation as animation
+from IPython.display import HTML
+
+
+#Tworzymy dwie macierze zerowe 10x10 które będą służyły jako bazy do wypełnienia znznymi danymi oraz nowymi danymi po każdej iteracji Laplaca
+L = np.zeros((10, 10))
+Lnew = np.zeros((10, 10))
+
+#Ustalamy warunek początkowy cyzli w tym przypaku rozgrzaną powierzchnie dolną,
+#sygnalizuje to przypisanie wartości 1 wszystkim miejscom z ostatniego rzędu obu macierzy,
+#gdyż warunek jest stały i dla nowopowstałej jak i bazowej macierzy
+L[9, :] = 1  
+Lnew[9, :] = 1  
+
+#Definiujemy funkcje potrzebną do zmiennej, od której zależne będzie zatrzymanie pętli
+#iterującej kolejne wywołania obliczenia Laplaca na nowej macierzy Lnew
+def stop(L, Lnew):
+    
+    return np.abs(np.sum(Lnew) - np.sum(L))
+
+data = []  
+
+#Tworzymy główną funkcję odpowiedzialną za obliczanie za pomocą Laplaca wartości dla nowej macierzy Lnew
+def laplace(L, Lnew):
+
+    #Ustawiamy zmienną e na cokolwiek większego od 0.01
+    e = 1  
+    #Jako warunek trwania pętli ustalamy warość e większą od 0.01
+    while e > 0.01:
+        #Dla każdej kratki w rzędach (i) i w kolumnach (j)
+        for i in range(1, 9):
+            for j in range(1, 9):
+                #obliczamy za pomocą wzoru Laplaca wartość po jednej iteracji
+                Lnew[i, j] = 0.25 * (L[i - 1, j] + L[i + 1, j] + L[i, j - 1] + L[i, j + 1])
+        
+        #Zmiennej e przypisujemy wartość funkcji stop czyli wartość bezwzględną z różnicy 
+        #pomiędzy wartościami na macierzy przed i po iteracji
+        e = stop(L, Lnew)  
+
+        #Do data frema przypisujemy kopie nowo utworzonych wartości macierzy Lnew,
+        #a jako macierz bazową L ustawiamy obecne Lnew
+        data.append(Lnew.copy())  
+        L[:] = Lnew  
+
+    #Zwracamy data frame
+    return data
+
+#Wywołujemy funkcje laplace od obu macierzy
+data = laplace(L, Lnew)
+
+#Definiujemy wartości potrzebne do użycia w funkcji animacji 
+fig, ax = plt.subplots()
+mat = ax.matshow(data[0], cmap='hot')
+
+#Tworzymy funkcję update oddającą wartość mówiącą o momencie powstawania kolejnych klatek animacji
+def update(frame):
+
+    mat.set_array(data[frame])
+    return [mat]
+
+#Tworzymy animację za pomocą argumentów utworzonych powyżej
+ani = animation.FuncAnimation(fig, update, frames=len(data), interval=100, repeat=False)
+
+#Przekształcamy naszą animację do HTMLa aby dało się ją wyświetlić na stronie internetowej
+HTML(ani.to_jshtml())
