@@ -1,0 +1,60 @@
+import matplotlib; matplotlib.use("TkAgg")
+import numpy as np
+import matplotlib.pyplot as plt
+import matplotlib.animation as animation
+import random
+from scipy.stats import levy
+from scipy.stats import binom
+
+
+L = np.zeros((100, 100))
+Lnew = np.zeros((100, 100))
+
+def movement(pos):
+    minusx = random.randrange(0,1)
+    minusy = random.randrange(0,1)
+    x = int(np.clip(np.round(levy.rvs(size=1)[0]), 1, 3))
+    y = int(np.clip(np.round(levy.rvs(size=1)[0]), 1, 3))
+    if minusx == 1:
+        x=-x
+    if minusy == 1:
+        y=-y
+    pos = pos[0] + x, pos[1] + y
+    return pos
+
+
+data = []
+
+pos = [50, 50]
+L[pos[0], pos[1]] = 1
+
+def laplace(L,Lnew,pos):
+    for k in range(1,1001):
+        Lnew[1:99, 1:99] = 0.25 * (L[:-2, 1:99] + L[2: , 1:99] + L[1:99, :-2] + L[1:99,2:])
+        while True:
+            new_pos=movement(pos)
+            if 0 < new_pos[0] < 99 and 0 < new_pos[1] < 99:
+                print(new_pos)
+                pos=np.copy(new_pos)
+                break
+
+        Lnew[pos[0], pos[1]] = 1
+
+        data.append(Lnew.copy())
+        L=np.copy(Lnew)
+
+
+
+    return(data)
+
+
+data=laplace(L,Lnew,pos)
+fig, ax = plt.subplots()
+mat = ax.matshow(data[0])
+
+def update(frame):
+    mat.set_array(data[frame])
+    return [mat]
+
+ani = animation.FuncAnimation(fig, update, frames=range(0, len(data), 10), interval=100, repeat=False)
+plt.show()
