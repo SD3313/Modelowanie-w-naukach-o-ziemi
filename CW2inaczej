@@ -1,0 +1,139 @@
+import matplotlib; matplotlib.use("TkAgg")
+import numpy as np
+import matplotlib.pyplot as plt
+import math as mt
+import matplotlib.animation as animation
+from matplotlib.animation import FuncAnimation
+from scipy.spatial.distance import euclidean
+import random
+from matplotlib.patches import Circle
+from multiprocessing import Pool
+
+
+
+
+
+N=200 #rozmiar siatki
+x=3 #ilosc rud zelaza
+
+iteracje = 10000
+L = np.zeros((N, N))
+L = L + 0.002
+Lnew = np.zeros((N, N))
+Lnew = Lnew + 0.002
+
+
+
+a_max = 0.006
+data = []
+L[0] = 0
+L[N-1] = 50
+Lnew[N-1] = 50
+step = 5
+dt = (step*step)/(4*a_max)
+
+def rand_places(x): #losowanie indeksow w ktorych znajda sie te rudy
+    ores= []
+    for k in range(0,x):
+        a = random.randint(20, 180)
+        b = random.randint(20, 180)
+        result = [a,b]
+        ores.append(result)
+    return ores
+
+
+
+
+def body_create(x):#generacja okraglych macierzy
+    body_storage = []
+    for k in range(0, x+1):
+
+        body = np.zeros((20,20))
+        body = body + 0.002
+        center = [10, 10]
+
+        for i in range(body.shape[0]):
+            for j in range(body.shape[1]):
+                point = [i, j]
+                euclidean = np.sqrt((point[0] - center[0])**2 + (point[1] - center[1])**2)
+                if euclidean < 10:
+                    #body[i,j]=200 #dla obrazu gdzie kolka!
+                    body[i, j] = 0.006
+        body_storage.append(body)
+    return body_storage
+
+
+def geotermal(L, Lnew, a):
+    for k in range(1,  2000):
+        for i in range(1, N - 1):
+            for j in range(1, N - 1):
+                Lnew[i, j] = (1 - (4 * dt * a[i, j]) / (step * step)) * L[i, j] + dt * a[i, j] * (
+                            (L[i - 1, j] + L[i + 1, j] + L[i, j - 1] + L[i, j + 1]) / (step * step))
+
+        Lnew[:, 0] = L[:, 1]
+        Lnew[:, N - 1] = L[:, N - 2]
+        data.append(Lnew.copy())
+        L[:] = Lnew
+
+    return data
+
+
+
+
+
+
+
+
+
+
+
+
+ore_positions = rand_places(3)
+bodies =body_create(x)
+
+for (start_x, start_y), body in zip(ore_positions, bodies):
+    end_x, end_y = start_x + body.shape[0], start_y + body.shape[1]
+    L[start_x:end_x, start_y:end_y] = body #calkiem posrany loop
+Lnew = L.copy()
+a = L.copy()
+
+data=geotermal(L,Lnew,a)
+
+
+
+
+
+
+
+
+
+
+ore_positions2 = list(ore_positions)
+
+print(ore_positions2)
+print(ore_positions2[0][0])
+
+
+
+
+fig, ax = plt.subplots()
+
+circle1 = Circle((ore_positions2[0][1]+10,ore_positions2[0][0]+10), radius=10.5,  edgecolor='red', facecolor = None)
+circle2 = Circle((ore_positions2[1][1]+10,ore_positions2[1][0]+10), radius=10.5, edgecolor='red',facecolor = None)
+circle3 = Circle((ore_positions2[2][1]+10,ore_positions2[2][0]+10), radius=10.5, edgecolor='red',facecolor = None)
+
+mat=ax.matshow(data[0])
+ax.add_patch(circle1)
+ax.add_patch(circle2)
+ax.add_patch(circle3)
+
+
+def update(frame):
+    mat.set_array(data[frame])
+    return [mat]
+
+
+ani = animation.FuncAnimation(fig, update, frames=range(0, len(data), 10), interval=100, repeat=False)
+
+plt.show()
+
