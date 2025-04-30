@@ -1,7 +1,6 @@
 #Instalujemy wymagane biblioteki i importujemy je
 
-!pip install numpy
-!pip install matplotlib
+
 import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib.animation as animation
