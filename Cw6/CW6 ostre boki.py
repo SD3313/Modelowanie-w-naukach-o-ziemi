@@ -106,3 +106,10 @@ def model_sejsmiczny_video(zapisz_jako="sejsmogram_animacja.mp4"):
     print(f"Maksymalna amplituda w punkcie ({xp}, {yp}): {max_cisnienie:.3f}")
 
     return sejsmogram, sejsmogram_xp_yp
+
+
+sejsmo, max_cis = model_sejsmiczny_video()
+
+from IPython.display import Video
+
+Video("sejsmogram_animacja.mp4")
