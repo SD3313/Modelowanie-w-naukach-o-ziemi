@@ -1,0 +1,21 @@
+    center = (250, 225)
+    for i in range(200,300):
+        for j in range(100,350):
+
+
+            euclidean = np.sqrt((i - center[0]) ** 2 + (j - center[1]) ** 2)
+            if euclidean < 50:  # dla mniejszych promieni
+                # body[i,j]=200 #dla obrazu gdzie kolka!
+                V[i, j] =  343
+    center = 350, 375
+    for i in range(300,400):
+        for j in range(250,500):
+
+
+            euclidean = np.sqrt((i - center[0]) ** 2 + (j - center[1]) ** 2)
+            if euclidean < 50:  # dla mniejszych promieni
+                # body[i,j]=200 #dla obrazu gdzie kolka!
+                V[i, j] =  343
+
+    V[200:300, 100:350] = 343
+    V[300:400, 250:500] = 343
