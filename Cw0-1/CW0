@@ -1,6 +1,7 @@
 #Instalujemy wymagane biblioteki i importujemy je
 
-
+import matplotlib
+matplotlib.use('TkAgg')
 import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib.animation as animation
@@ -67,4 +68,7 @@ def update(frame):
 ani = animation.FuncAnimation(fig, update, frames=len(data), interval=100, repeat=False)
 
 #Przekształcamy naszą animację do HTMLa aby dało się ją wyświetlić na stronie internetowej
-HTML(ani.to_jshtml())
+#HTML(ani.to_html5_video())
+
+#Wyświetlamy animację
+plt.show()
