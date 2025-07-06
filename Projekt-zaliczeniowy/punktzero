@@ -1,0 +1,117 @@
+import pandas as pd
+import numpy as np
+import math
+import matplotlib.pyplot as plt
+import matplotlib.image as mpimg
+from PIL import Image
+
+
+img = Image.open("Antarctica_6400px_from_Blue_Marble.jpg")
+img = np.asarray(img)
+
+
+
+# Wczytaj dane
+df = pd.read_csv('daily_ice_edge.csv')
+
+# Minimalne wartości
+minimum = [df[col].min() for col in df.columns[1:]]
+
+# Funkcja normalizująca
+def normalize_range(data, new_min, new_max):
+    old_min = min(data)
+    old_max = max(data)
+    return [((x - old_min) / (old_max - old_min)) * (new_max - new_min) + new_min for x in data]
+
+#NORMALIZACJA
+minimum_normalized = normalize_range(minimum, 50, 110)
+minimum_normalized2 = normalize_range(minimum, 80, 160)
+
+# Kąty
+angles = np.linspace(0, 360, len(minimum), endpoint=False)
+
+angles=(angles)%360
+
+# Konwersja do (x,y)
+punkty = []
+for angle, radius in zip(angles, minimum_normalized):
+    x = math.sin(math.radians(angle)) * radius
+    y = math.cos(math.radians(angle)) * radius
+    punkty.append((x, y))
+
+
+punkty2_wykres = []
+for angle, radius in zip(angles, minimum_normalized2):
+    x = math.sin(math.radians(angle)) * radius
+    y = math.cos(math.radians(angle)) * radius
+    punkty2_wykres.append((x, y))
+
+
+# Współrzędne
+xs = [p[0] for p in punkty]
+ys = [p[1] for p in punkty]
+xs2 = [p[0] for p in punkty2_wykres]
+ys2 = [p[1] for p in punkty2_wykres]
+
+
+
+
+xs.append(xs[0])
+ys.append(ys[0])
+
+xs2.append(xs2[0])
+ys2.append(ys2[0])
+
+
+
+fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(12, 6))
+ax1.plot(xs, ys, color='blue')
+ax2.plot(xs2, ys2, color='blue')
+
+fig.suptitle("model minimalnego zasięgu lodu dla wszystkich kątów", fontsize=16)
+
+
+ax2.plot(xs2, ys2, color='blue', zorder=1)
+
+ax2.set_xlim(-160, 160)
+ax2.set_ylim(-160, 160)
+ax2.set_aspect('equal')
+
+
+for i, (x,y) in enumerate(punkty2_wykres):
+    print(f"Punkt {i}: x={x:.2f}, y={y:.2f}")
+
+
+for r in np.linspace(50, 150, 5):
+    circle = plt.Circle((0, 0), r, color='lightgray', fill=False, linestyle='--')
+    ax1.add_artist(circle)
+
+for r in np.linspace(50, 150, 5):
+    circle = plt.Circle((0, 0), r, color='lightgray', fill=False, linestyle='--')
+    ax2.add_artist(circle)
+
+for angle in np.arange(0, 360, 30):
+    rad = np.radians(angle)
+    x = [0, 100*np.cos(rad)]
+    y = [0, 100*np.sin(rad)]
+    ax1.plot(x, y, color='lightgray', linestyle='--')
+ax1.set_aspect('equal')
+
+for angle in np.arange(0, 360, 30):
+    rad = np.radians(angle)
+    x = [0, 100*np.cos(rad)]
+    y = [0, 100*np.sin(rad)]
+    ax2.plot(x, y, color='lightgray', linestyle='--')
+
+ax2.set_aspect('equal')
+
+ax2.imshow(
+    img,
+    extent=[-160,160,-160,160],
+    alpha=0.2,
+    zorder=0
+)
+
+
+
+plt.show()
