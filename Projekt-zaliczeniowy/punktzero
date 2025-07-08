@@ -29,7 +29,6 @@ minimum_normalized2 = normalize_range(minimum, 80, 160)
 
 # Kąty
 angles = np.linspace(0, 360, len(minimum), endpoint=False)
-
 angles=(angles)%360
 
 # Konwersja do (x,y)
@@ -113,5 +112,49 @@ ax2.imshow(
 )
 
 
+
+plt.show()
+
+# ... (kod powyżej zostaje bez zmian aż do końcowej sekcji wykresów)
+
+# --------- WYKRES 1 ---------
+plt.figure(figsize=(6, 6))
+plt.plot(xs, ys, color='blue')
+plt.title("Model minimalnego zasięgu lodu (zakres: 50-110)")
+plt.xlim(-160, 160)
+plt.ylim(-160, 160)
+plt.gca().set_aspect('equal')
+for r in np.linspace(50, 150, 5):
+    circle = plt.Circle((0, 0), r, color='lightgray', fill=False, linestyle='--')
+    plt.gca().add_artist(circle)
+for angle in np.arange(0, 360, 30):
+    rad = np.radians(angle)
+    x = [0, 100*np.cos(rad)]
+    y = [0, 100*np.sin(rad)]
+    plt.plot(x, y, color='lightgray', linestyle='--')
+
+plt.show()
+
+# --------- WYKRES 2 ---------
+plt.figure(figsize=(6, 6))
+plt.plot(xs2, ys2, color='blue')
+plt.title("Model minimalnego zasięgu lodu (zakres: 80-160)")
+plt.xlim(-160, 160)
+plt.ylim(-160, 160)
+plt.gca().set_aspect('equal')
+for r in np.linspace(50, 150, 5):
+    circle = plt.Circle((0, 0), r, color='lightgray', fill=False, linestyle='--')
+    plt.gca().add_artist(circle)
+for angle in np.arange(0, 360, 30):
+    rad = np.radians(angle)
+    x = [0, 100*np.cos(rad)]
+    y = [0, 100*np.sin(rad)]
+    plt.plot(x, y, color='lightgray', linestyle='--')
+plt.imshow(
+    img,
+    extent=[-160, 160, -160, 160],
+    alpha=0.2,
+    zorder=0
+)
 
 plt.show()
