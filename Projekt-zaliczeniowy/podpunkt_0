@@ -24,7 +24,9 @@ def normalize_range(data, new_min, new_max):
     return [((x - old_min) / (old_max - old_min)) * (new_max - new_min) + new_min for x in data]
 
 #NORMALIZACJA
+
 minimum_normalized = normalize_range(minimum, 50, 110)
+
 minimum_normalized2 = normalize_range(minimum, 80, 160)
 
 # Kąty
@@ -49,6 +51,8 @@ for angle, radius in zip(angles, minimum_normalized2):
 # Współrzędne
 xs = [p[0] for p in punkty]
 ys = [p[1] for p in punkty]
+
+
 xs2 = [p[0] for p in punkty2_wykres]
 ys2 = [p[1] for p in punkty2_wykres]
 
@@ -115,9 +119,7 @@ ax2.imshow(
 
 plt.show()
 
-# ... (kod powyżej zostaje bez zmian aż do końcowej sekcji wykresów)
-
-# --------- WYKRES 1 ---------
+# WYKRES 1
 plt.figure(figsize=(6, 6))
 plt.plot(xs, ys, color='blue')
 plt.title("Model minimalnego zasięgu lodu (zakres: 50-110)")
@@ -135,7 +137,7 @@ for angle in np.arange(0, 360, 30):
 
 plt.show()
 
-# --------- WYKRES 2 ---------
+# WYKRES 2
 plt.figure(figsize=(6, 6))
 plt.plot(xs2, ys2, color='blue')
 plt.title("Model minimalnego zasięgu lodu (zakres: 80-160)")

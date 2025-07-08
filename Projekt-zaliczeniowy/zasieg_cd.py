@@ -1,16 +1,12 @@
+import matplotlib
 import pandas as pd
 import numpy as np
 import math
 import matplotlib.pyplot as plt
+#matplotlib.use('TkAgg')
 from PIL import Image
 
-from math import sin  # do eval()
-
-
 x_model =9000
-
-
-
 
 
 img = Image.open("Antarctica_6400px_from_Blue_Marble.jpg")
@@ -28,7 +24,7 @@ print(given_date)
 dzien_dane = df.iloc[x_model, 1:].values.astype(float)
 
 
-df_f = pd.read_csv("lambda_funkcje_dla_wierzcholkow.csv")
+df_f = pd.read_csv("lambda_funkcje_dla_wierzcholkow2.csv")
 wartosci_modelu = []
 
 for idx, row in df_f.iterrows():
